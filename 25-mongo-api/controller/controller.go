@@ -6,23 +6,36 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/gorilla/mux"
+	"github.com/joho/godotenv"
 	"github.com/mayurlalwani/mongoapi/model"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
-
-const connectionString = "mongodb+srv://admin:admin@cluster0.xtsvafl.mongodb.net/?retryWrites=true&w=majority"
 const dbName = "netflix"
 const collectionName = "watchlist"
 
 var collection *mongo.Collection
 
+func goDotEnvVariable(key string) string {
+
+  // load .env file
+  err := godotenv.Load(".env")
+
+  if err != nil {
+    log.Fatalf("Error loading .env file")
+  }
+
+  return os.Getenv(key)
+}
+
 func init(){
-	clientOption := options.Client().ApplyURI(connectionString)
+	 dotenv := goDotEnvVariable("MONGO_URI")
+	clientOption := options.Client().ApplyURI(dotenv)
 
 	client, err := mongo.Connect(context.TODO(), clientOption)
 
